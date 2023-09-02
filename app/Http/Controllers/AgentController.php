@@ -86,7 +86,7 @@ class AgentController extends Controller
     {
         $agent = User::findOrFail($id);
 
-        return view('agents.show', compact('agent'));
+        return view('pages.agents.show', compact('agent'));
     }
 
     /**
