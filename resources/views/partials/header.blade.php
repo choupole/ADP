@@ -23,7 +23,7 @@
                     <span class="user-name">{{ Auth::user()?->prenom }} {{ Auth::user()?->name }}</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                    <a class="dropdown-item" href="profile.html"><i class="dw dw-user1"></i> Profile</a>                 
+                    {{-- <a class="dropdown-item" href="{{ route('agents.show', $agent->id) }}"><i class="dw dw-user1"></i> Profile</a>                  --}}
                         <a href="#" class="dropdown-item"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             <i class="dw dw-logout"></i>Se deconnecter
