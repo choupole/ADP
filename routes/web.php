@@ -43,7 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('attestations', AttestationController::class)->middleware('checkaccess:Attestation');
     Route::resource('fonctions', FonctionController::class)->middleware('checkaccess:Fonction');
     Route::resource('agents', AgentController::class)->middleware('checkaccess:User');
-    Route::get('/paiements/{paiement}/print', [App\Http\Controllers\PaiementController::class, 'print'])->name('paiements.print');
+    // Route::get('/paiements/{paiement}/print', [App\Http\Controllers\PaiementController::class, 'print'])->name('paiements.print');
     Route::post('fonctions/modify/{fonctionId}', [App\Http\Controllers\FonctionController::class, 'modify'])->name('fonctions.modify')->middleware('checkaccess:Nationality');
 });
 

@@ -17,7 +17,7 @@
                     </nav>
                 </div>
                 <div class="col-md-6 col-sm-12 text-right">
-                    <a href="{{ route('paiements.print', $paiement->id) }}" class="btn btn-primary" target="_blank">Imprimer</a>
+                    <a href="" onclick="printContent()" class="btn btn-primary" >Imprimer</a>
                 </div>
             </div>
         </div>
@@ -36,4 +36,20 @@
             </div>
         </div>
     </div>
+@endsection
+@section('scripts')
+<script>
+    function printContent() {
+        var printWindow = window.open('', '_blank');
+        printWindow.document.write(`{!! addslashes(view('pages.paiements.print', compact('paiement'))->render()) !!}`);
+        printWindow.document.close();
+        printWindow.print();
+
+        // Gérer l'événement "onbeforeunload" dans la fenêtre d'impression
+        printWindow.onbeforeunload = function() {
+            // Fermer la fenêtre d'impression
+            printWindow.close();
+        };
+    }
+</script>
 @endsection

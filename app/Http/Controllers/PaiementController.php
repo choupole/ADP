@@ -6,8 +6,6 @@ use App\Http\Requests\UpdatePaiementRequest;
 use App\Models\Paiement;
 use App\Models\Parcelle;
 use App\Models\Proprietaire;
-use Dompdf\Dompdf;
-use Dompdf\Options;
 use Illuminate\Http\Request;
 
 class PaiementController extends Controller
@@ -57,80 +55,68 @@ class PaiementController extends Controller
         return redirect()->route('paiements.index')->with('success', 'Le paiement a été ajouté avec succès.');
     }
 
-/**
- * Display the specified resource.
- */
-/**
- * Display the specified resource.
- */
-public function show($id)
-{
-    $paiement = Paiement::findOrFail($id);
+    /**
+     * Display the specified resource.
+     */
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        $paiement = Paiement::findOrFail($id);
 
-    return view('pages.paiements.show', compact('paiement'));
-}
+        return view('pages.paiements.show', compact('paiement'));
+    }
 
-public function print($id)
-{
-    $paiement = Paiement::findOrFail($id);
+    public function print($id)
+    {
+        $paiement = Paiement::findOrFail($id);
 
-    // Créez une instance de Dompdf avec les options par défaut
-    $options = new Options();
-    $options->set('defaultFont', 'Arial');
-    $dompdf = new Dompdf($options);
+        // Générez le contenu de la facture dans une vue
+        $html = view('pages.paiements.print', compact('paiement'))->render();
 
-    // Générez le contenu de la facture dans une vue
-    $html = view('pages.paiements.print', compact('paiement'))->render();
+        return view('pages.paiements.show', compact('paiement', 'html'));
+    }
 
-    // Chargez le contenu HTML dans Dompdf
-    $dompdf->loadHtml($html);
+    /**
+     * Show the form for editing the specified resource.
+     */
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Paiement $paiement)
+    {
+        $proprietaires = Proprietaire::all();
 
-    // Rendez le contenu de la facture
-    $dompdf->render();
+        return view('paiements.edit', compact('paiement', 'proprietaires'));
+    }
 
-    // Générez le PDF et renvoyez-le en réponse
-    return $dompdf->stream('facture.pdf');
-}
+    /**
+     * Get the validation rules that apply to the request.
+     */
+    public function rules()
+    {
+        return [
+            'proprietaire_id' => 'required',
+            'montant' => 'required',
+            'datePaie' => 'required|date',
+        ];
+    }
 
-/**
- * Show the form for editing the specified resource.
- */
-/**
- * Show the form for editing the specified resource.
- */
-public function edit(Paiement $paiement)
-{
-    $proprietaires = Proprietaire::all();
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdatePaiementRequest $request, Paiement $paiement)
+    {
+        $request->validated();
 
-    return view('paiements.edit', compact('paiement', 'proprietaires'));
-}
+        $paiement->montant = $request->input('montant');
+        $paiement->datePaie = $request->input('datePaie');
+        $paiement->user_id = $request->input('user_id');
+        $paiement->save();
 
-/**
- * Get the validation rules that apply to the request.
- */
-public function rules()
-{
-    return [
-        'proprietaire_id' => 'required',
-        'montant' => 'required',
-        'datePaie' => 'required|date',
-    ];
-}
-
-/**
- * Update the specified resource in storage.
- */
-public function update(UpdatePaiementRequest $request, Paiement $paiement)
-{
-    $request->validated();
-
-    $paiement->montant = $request->input('montant');
-    $paiement->datePaie = $request->input('datePaie');
-    $paiement->user_id = $request->input('user_id');
-    $paiement->save();
-
-    return redirect()->route('paiements.index')->with('success', 'Le paiement a été modifié avec succès.');
-}
+        return redirect()->route('paiements.index')->with('success', 'Le paiement a été modifié avec succès.');
+    }
 
     /**
      * Remove the specified resource from storage.
